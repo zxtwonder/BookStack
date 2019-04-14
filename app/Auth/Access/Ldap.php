@@ -101,7 +101,12 @@ class Ldap
      */
     public function explodeDn(string $dn, int $withAttrib)
     {
-        return ldap_explode_dn($dn, $withAttrib);
+        $result = ldap_explode_dn($dn, $withAttrib);
+
+        foreach ($result as $key => $value) {
+            $result[$key] = preg_replace_callback('/\\\\([0-9A-Fa-f]{2})/', function ($matches) { return chr(hexdec($matches[1])); }, $value);
+        }
+        return $result;
     }
 
     /**
